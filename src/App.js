@@ -6,7 +6,7 @@ import Layout from "./components/Layout/Layout";
 import Products from "./components/Shop/Products";
 import Notification from "./components/UI/Notification";
 //import { uiActions } from "./store/ui-slice";
-import { sendCartData } from "./store/cart-slice";
+import { sendCartData, fetchCartData } from "./store/cart-actions";
 
 let isInitial = true;
 
@@ -17,11 +17,18 @@ function App() {
   const notification = useSelector((state) => state.ui.notification);
 
   useEffect(() => {
+    dispatch(fetchCartData());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (isInitial) {
       isInitial = false;
       return;
     } //чтобы корзина не отправляла данные при первичной загрузке страницы
-    dispatch(sendCartData(cart)); //в dispatch можно передавать не только actions с объектом внутри с type и payload, но и функции с сайдэффектами, редакс тулкит вызовет эти функции
+
+    if (cart.changed) {
+      dispatch(sendCartData(cart)); //в dispatch можно передавать не только actions с объектом внутри с type и payload, но и функции с сайдэффектами, редакс тулкит вызовет эти функции
+    }
     // const sendCartData = async () => {
     // dispatch(
     //   uiActions.showNotification({
